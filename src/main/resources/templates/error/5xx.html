@@ -6,13 +6,10 @@
 </head>
 <body>
 
-<div th:oject="${insertAdministratorForm}">
-<span th:text="${mailaddress}" th:field="*{mailAddress}">
-</span></div>
 入力されたメールアドレスでは既に登録されています。
 違うメールアドレスで登録してください。<br>
 
-<a th:href="@{/insert}">登録画面へ</a>
+<a th:href="@{/toInsert}">登録画面へ</a>
 
 </body>
 </html>
