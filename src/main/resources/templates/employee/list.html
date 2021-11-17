@@ -60,7 +60,7 @@
 		<input type="text" name="name">
 		<button>検索</button>
 		</form>
-		<div th:text="${size} + 件"></div>
+		<div th:if="${size} != null" th:text="${size} + 件"></div>
 		<!-- table -->
 		<div class="row">
 			<div
