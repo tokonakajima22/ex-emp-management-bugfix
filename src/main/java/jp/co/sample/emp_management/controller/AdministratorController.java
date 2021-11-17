@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jp.co.sample.emp_management.domain.Administrator;
 import jp.co.sample.emp_management.form.InsertAdministratorForm;
@@ -79,23 +78,27 @@ public class AdministratorController {
 	 * @return ログイン画面へリダイレクト
 	 */
 	@RequestMapping("/insert")
-	public String insert(@Validated InsertAdministratorForm form, BindingResult result, RedirectAttributes redirectAttributes) {
+	public String insert(@Validated InsertAdministratorForm form, BindingResult result, Model model) {
 		
 		if(result.hasErrors()) {
 			return toInsert();
 		}
 		Administrator administrator = new Administrator();
-		
-		if(form.getPassword().equals(form.getConfirmPassword())) {
-			// フォームからドメインにプロパティ値をコピー
-			BeanUtils.copyProperties(form, administrator);
-			administratorService.insert(administrator);
+		try {
+			if(form.getPassword().equals(form.getConfirmPassword())) {
+				// フォームからドメインにプロパティ値をコピー
+				BeanUtils.copyProperties(form, administrator);
+				administratorService.insert(administrator);
 //			redirectAttributes.addFlashAttribute("administrator", administrator);
-			return "redirect:/";
-		}else {
-		System.out.println(form.getPassword() +" "+ form.getConfirmPassword());
-			return toInsert();
+				return "redirect:/";
+			}else {
+				System.out.println(form.getPassword() +" "+ form.getConfirmPassword());
+				return toInsert();
+			}
+		}catch(Exception e){
+			model.addAttribute("mailAddressError", "登録済のアドレスです");
 		}
+		return toInsert();
 	}
 	
 	@ResponseBody
