@@ -71,7 +71,6 @@
 										<label for="password">
 											パスワード:
 										</label>
-										<div id="validationErrorMessage1" style="color: red;"></div>
 										<label th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error-messages">
 											パスワードを入力してください
 										</label>
