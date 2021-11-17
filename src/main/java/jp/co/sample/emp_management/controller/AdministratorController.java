@@ -151,8 +151,10 @@ public class AdministratorController {
 		if (administrator == null) {
 			model.addAttribute("errorMessage", "メールアドレスまたはパスワードが不正です。");
 			return toLogin();
+		}else {
+			session.setAttribute("administratorName", administrator.getName());
+			return "forward:/employee/showList";
 		}
-		return "forward:/employee/showList";
 	}
 	
 	/////////////////////////////////////////////////////
@@ -170,3 +172,5 @@ public class AdministratorController {
 	}
 	
 }
+
+
