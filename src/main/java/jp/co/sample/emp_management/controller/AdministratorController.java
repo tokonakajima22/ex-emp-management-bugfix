@@ -1,5 +1,8 @@
 package jp.co.sample.emp_management.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.BeanUtils;
@@ -10,6 +13,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jp.co.sample.emp_management.domain.Administrator;
@@ -80,13 +85,42 @@ public class AdministratorController {
 			return toInsert();
 		}
 		Administrator administrator = new Administrator();
-		// フォームからドメインにプロパティ値をコピー
-		BeanUtils.copyProperties(form, administrator);
-		administratorService.insert(administrator);
-
-		redirectAttributes.addFlashAttribute("administrator", administrator);
-		return "redirect:/";
+		
+		if(form.getPassword().equals(form.getConfirmPassword())) {
+			// フォームからドメインにプロパティ値をコピー
+			BeanUtils.copyProperties(form, administrator);
+			administratorService.insert(administrator);
+//			redirectAttributes.addFlashAttribute("administrator", administrator);
+			return "redirect:/";
+		}else {
+		System.out.println(form.getPassword() +" "+ form.getConfirmPassword());
+			return toInsert();
+		}
 	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/check", method = RequestMethod.POST)
+	public Map<String, String> check(String password, String confirmPassword) {
+		
+		// 画面にレスポンスするデータをMapオブジェクトとして用意
+		Map<String, String> map = new HashMap<>();
+
+		// パスワード一致チェック
+		String validationErrorMessage2 = null;
+		if (password.equals(confirmPassword)) {
+			validationErrorMessage2 = "確認用パスワード入力OK!";
+		} else {
+			validationErrorMessage2 = "パスワードが一致していません";
+		}
+
+		// レスポンスするMapオブジェクトに、メッセージを格納
+		map.put("validationErrorMessage2", validationErrorMessage2);
+		
+		System.out.println(password + ":" + confirmPassword); // デバッグ用コンソール出力
+		
+		return map;
+	}
+	
 	
 
 	/////////////////////////////////////////////////////
@@ -117,8 +151,10 @@ public class AdministratorController {
 		if (administrator == null) {
 			model.addAttribute("errorMessage", "メールアドレスまたはパスワードが不正です。");
 			return toLogin();
+		}else {
+			session.setAttribute("administratorName", administrator.getName());
+			return "forward:/employee/showList";
 		}
-		return "forward:/employee/showList";
 	}
 	
 	/////////////////////////////////////////////////////
@@ -136,3 +172,5 @@ public class AdministratorController {
 	}
 	
 }
+
+
